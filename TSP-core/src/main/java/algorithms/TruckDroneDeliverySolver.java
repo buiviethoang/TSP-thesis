@@ -193,9 +193,9 @@ public class TruckDroneDeliverySolver {
                 if (constructedInput.getDrone().isAbleToFly(0.0)) {
                     if (currSavings - delta > maxSavings) {
                         isDroneNode = false;
-                        bestVisitIndex = constructedInput.getSpecificLocationIndex(customer);
-                        bestLaunchIndex = constructedInput.getSpecificLocationIndex(first);
-                        bestRendezvousIndex = constructedInput.getSpecificLocationIndex(last);
+                        bestVisitIndex = getIndexOfNodeInTSPSol(customer);
+                        bestLaunchIndex = getIndexOfNodeInTSPSol(first);
+                        bestRendezvousIndex = getIndexOfNodeInTSPSol(last);
                         maxSavings = currSavings - delta;
                         bestSubrouteIndex = subRouteIndex;
                         //TODO: Should state the subroute this best solution belongs to.
@@ -231,9 +231,9 @@ public class TruckDroneDeliverySolver {
                             + waitingCost;
                     if (currSavings - delta > maxSavings) {
                         isDroneNode = true;
-                        bestVisitIndex = constructedInput.getSpecificLocationIndex(customer);
-                        bestLaunchIndex = constructedInput.getSpecificLocationIndex(first);
-                        bestRendezvousIndex = constructedInput.getSpecificLocationIndex(last);
+                        bestVisitIndex = getIndexOfNodeInTSPSol(customer);
+                        bestLaunchIndex = getIndexOfNodeInTSPSol(first);
+                        bestRendezvousIndex = getIndexOfNodeInTSPSol(last);
                         maxSavings = currSavings - delta;
                         bestSubrouteIndex = subRouteIndex;
                         //TODO: Should state the subroute this best solution belongs to.
@@ -315,5 +315,14 @@ public class TruckDroneDeliverySolver {
     }
     public TruckDroneDeliverySolutionOutput getSolution() {
         return this.solution;
+    }
+
+    public int getIndexOfNodeInTSPSol(Node node) {
+        if (node.getName().equals("depot")) return 0;
+        for (int i = 0; i < tspBootstrappingSolution.size(); i++) {
+            if (node.getName().equals(tspBootstrappingSolution.get(i).getName()))
+                return i;
+        }
+        return -1;
     }
 }
