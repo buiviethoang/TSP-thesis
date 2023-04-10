@@ -5,6 +5,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.ArrayList;
 import java.util.List;
 
 @Setter
@@ -32,5 +33,34 @@ public class TruckDroneDeliverySolutionOutput {
         this.totalTruckWait = 0;
         this.totalDroneWait = 0;
     }
-
+//    public double calculateDroneCost() {
+//
+//    }
+//    public double calculateTruckCost() {
+//
+//    }
+//    public double calculateTruckWaitingCost() {
+//
+//    }
+//    public double calculateDroneWaitingCost() {
+//
+//    }
+    public double calculateTotalCost() {
+        this.totalCost = this.totalTruckCost + this.totalDroneCost + this.totalDroneWait + this.totalTruckWait;
+        return this.totalCost;
+    }
+    public List<Node> convertTruckRouteToNode(TruckRoute truckRoute) {
+        List<Node> truckNode = new ArrayList<>();
+        for (TruckRouteElement ele : truckRoute.getRouteElements()) {
+            truckNode.add(ele.getNode());
+        }
+        return truckNode;
+    }
+    public List<Node> convertDroneRouteToNode(DroneRoute droneRoute) {
+        List<Node> droneNode = new ArrayList<>();
+        for (DroneRouteElement ele : droneRoute.getDroneRouteElements()) {
+            droneNode.add(ele.getNode());
+        }
+        return droneNode;
+    }
 }

@@ -133,7 +133,7 @@ public class DrawingTools {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void drawSolution(List<Node> initialNodes, int w, int h, boolean labels) {
+    public void drawSolution(List<Node> initialNodes, int w, int h, boolean labels, boolean isDrawingDrone) {
         BufferedImage image = new BufferedImage(w,h, BufferedImage.TYPE_INT_RGB);
         JFrame frame = new JFrame("Line Drawing Example");
         JLabel label = new JLabel(new ImageIcon(image));
@@ -141,7 +141,12 @@ public class DrawingTools {
         Mapping m = defaultMapping(initialNodes, w, h);
 
         label.setBackground(Color.WHITE);
-        g2d.setColor(Color.ORANGE);
+        if (isDrawingDrone) {
+            g2d.setColor(Color.GREEN);
+
+        } else {
+            g2d.setColor(Color.ORANGE);
+        }
         g2d.setBackground(Color.WHITE);
         for (int i = 0; i < initialNodes.size() - 1; i++) {
             Node currentNode = initialNodes.get(i);

@@ -48,7 +48,7 @@ public class NearestNeighborSolver {
          * Search for the nearest neighbor starting from the highest
          * location/node (end-of-array), in order to always select the lowest
          * node, in the cases where two location/nodes have the same exact
-         * distance. This is our tie breaker strategy.
+         * distance. Tie-breaker strategy.
          */
         for (int i = (tour.size() - 1); i > -1; i--) {
             // already visited node

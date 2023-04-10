@@ -4,6 +4,7 @@ import algorithms.entity.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.sql.ClientInfoStatus;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -117,16 +118,6 @@ public class TruckDroneDeliverySolver {
         if (truckRoute.size() == index)
             return null;
         return truckRoute.get(index + 1);
-    }
-    private List<List<Node>> findEdgeOfSubSequence(List<Node> subRoute) {
-        List<List<Node>> result = new ArrayList<>();
-        for (int i = 0; i < subRoute.size() - 1; i++) {
-            List<Node> edge = new ArrayList<>();
-            edge.add(subRoute.get(i));
-            edge.add(subRoute.get(i+1));
-            result.add(edge);
-        }
-        return result;
     }
     private boolean isSubRouteAssociateWithDroneDelivery(List<Node> truckSubRoute, TruckDroneDeliverySolutionOutput sol) {
         List<DroneRoute> droneRoutes = sol.getDroneRoutes();
@@ -254,27 +245,75 @@ public class TruckDroneDeliverySolver {
     // Algorithm 9: Update solution when there is a better one
     private void applyChanges() {
         if (isDroneNode) {
+            // Assign new drone route
             List<Node> droneRouteNode = new ArrayList<>();
             droneRouteNode.add(this.tspBootstrappingSolution.get(bestLaunchIndex));
             droneRouteNode.add(this.tspBootstrappingSolution.get(bestRendezvousIndex));
             droneRouteNode.add(this.tspBootstrappingSolution.get(bestVisitIndex));
             DroneRoute droneRoute = new DroneRoute(droneRouteNode);
             solution.getDroneRoutes().add(droneRoute);
-            globalTruckRoute.remove(bestVisitIndex);
-            List<Node> truckSubRoute = globalTruckSubRoutes.get(bestSubrouteIndex);
-
+            Node nodeToProceed = tspBootstrappingSolution.get(bestVisitIndex);
+            // Removing j*
+            int subRouteForRemoving = findSubRouteContainNodeFromSubRoutes(nodeToProceed, globalTruckSubRoutes);
+            List<Node> subRouteBeforeRemoving = globalTruckSubRoutes.get(subRouteForRemoving);
+            RemoveNodeReturnValue subRouteAfterRemoving = removeNodeFromRoute(nodeToProceed, subRouteBeforeRemoving);
+            globalTruckSubRoutes.set(subRouteForRemoving, subRouteAfterRemoving.route);
+            removeNodeFromRoute(nodeToProceed, globalTruckRoute);
+            // Append a new truck subRoute
+            List<Node> leftSubRoute = subRouteBeforeRemoving.subList(0, subRouteAfterRemoving.removingIndex);
+            List<Node> rightSubRoute = subRouteBeforeRemoving.subList(subRouteAfterRemoving.removingIndex + 1, subRouteBeforeRemoving.size());
+            globalTruckSubRoutes.set(subRouteForRemoving, leftSubRoute);
+            globalTruckSubRoutes.add(rightSubRoute);
+            // Removing i*, j*, k* from customers
             globalCustomers.remove(bestLaunchIndex);
             globalCustomers.remove(bestRendezvousIndex);
             globalCustomers.remove(bestVisitIndex);
         }
         else {
-            List<Node> truckSubRoute = globalTruckSubRoutes.get(bestSubrouteIndex);
-            for (int i = 0; i < truckSubRoute.size()-1; i++) {
-                if (truckSubRoute.get(i).getName().equals(tspBootstrappingSolution.get(bestLaunchIndex).getName())) {
-                    truckSubRoute.add(i+1, tspBootstrappingSolution.get(bestVisitIndex));
+            Node nodeToProceed = tspBootstrappingSolution.get(bestVisitIndex);
+            // Removing from current subRoute
+            int subRouteForRemoving = findSubRouteContainNodeFromSubRoutes(nodeToProceed, globalTruckSubRoutes);
+            List<Node> subRouteBeforeRemoving = globalTruckSubRoutes.get(subRouteForRemoving);
+            RemoveNodeReturnValue subRouteAfterRemoving = removeNodeFromRoute(nodeToProceed, subRouteBeforeRemoving);
+            globalTruckSubRoutes.set(subRouteForRemoving, subRouteAfterRemoving.route);
+            // Inserting to another subRoute
+            List<Node> truckSubRouteToInsert = globalTruckSubRoutes.get(bestSubrouteIndex);
+            List<Node> truckSubRouteAfterInserting = insertNodeToRoute(nodeToProceed, bestLaunchIndex, truckSubRouteToInsert);
+            globalTruckSubRoutes.set(bestSubrouteIndex, truckSubRouteAfterInserting);
+        }
+    }
+    static class RemoveNodeReturnValue {
+        int removingIndex;
+        List<Node> route;
+
+    }
+    private RemoveNodeReturnValue removeNodeFromRoute(Node removingNode, List<Node> subRoute) {
+        RemoveNodeReturnValue results = new RemoveNodeReturnValue();
+        for (int i = 0; i < subRoute.size(); i++) {
+            if (subRoute.get(i).getName().equals(removingNode.getName())) {
+                subRoute.remove(i);
+                results.removingIndex = i;
+            }
+        }
+        results.route = subRoute;
+        return results;
+    }
+    private List<Node> insertNodeToRoute(Node insertingNode, int insertFromRange, List<Node> subRoute) {
+        subRoute.add(insertFromRange, insertingNode);
+        return subRoute;
+    }
+    private int findSubRouteContainNodeFromSubRoutes(Node nodeToFind, List<List<Node>> subRoutes) {
+        for (int i = 0; i < subRoutes.size(); i++) {
+            List<Node> subRoute = subRoutes.get(i);
+            for (Node node: subRoute) {
+                if (node.getName().equals(nodeToFind.getName())) {
+                    return i;
                 }
             }
         }
+        return -1;
     }
-
+    public TruckDroneDeliverySolutionOutput getSolution() {
+        return this.solution;
+    }
 }
