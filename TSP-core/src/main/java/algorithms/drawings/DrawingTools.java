@@ -96,19 +96,19 @@ public class DrawingTools {
     private static void drawTruckRoute(TruckDroneDeliveryInput input,
                                        TruckDroneDeliverySolutionOutput solution,
                                        Mapping m, Graphics2D gr) {
-        Point prev = null;
-        for (TruckRouteElement element : solution.getTruckRoute().getRouteElements()) {
-            Node currentNode = input.getSpecificLocationById(element.getLocationID());
-            Point current = m.transform(currentNode.getX(), currentNode.getY());
-            if (prev != null) {
-                int x1 = prev.x;
-                int y1 = prev.y;
-                int x2 = current.x;
-                int y2 = current.y;
-                gr.drawLine(x1, y1, x2, y2);
-            }
-            prev = current;
-        }
+//        Point prev = null;
+//        for (TruckRouteElement element : solution.getTruckRoute()) {
+//            Node currentNode = input.getSpecificLocationById(element.getLocationID());
+//            Point current = m.transform(currentNode.getX(), currentNode.getY());
+//            if (prev != null) {
+//                int x1 = prev.x;
+//                int y1 = prev.y;
+//                int x2 = current.x;
+//                int y2 = current.y;
+//                gr.drawLine(x1, y1, x2, y2);
+//            }
+//            prev = current;
+//        }
     }
     public void drawNode(List<Node> initialNode, int w, int h, boolean labels) {
         BufferedImage image = new BufferedImage(w,h, BufferedImage.TYPE_INT_RGB);

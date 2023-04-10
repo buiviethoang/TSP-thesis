@@ -14,11 +14,11 @@ import java.util.List;
 @NoArgsConstructor
 public class Drone {
     private String ID;
-    private int capacity;
-    private int durationCapacity; // max duration time
+    private double capacity;
+    private double durationCapacity; // max duration time
     private double speed;
     private double transportCostPerUnit = 1;
-    private double waitingCost = 10;
+    private double waitingCost = 1;
 
     public List<Request> getEligibleServedByDroneCustomer(List<Request> customers) {
         List<Request> eligibleCustomers = new ArrayList<>();
@@ -31,5 +31,9 @@ public class Drone {
     }
     public boolean isAbleToServeACustomer(Request customer) {
         return customer.getWeight() <= this.capacity;
+    }
+
+    public boolean isAbleToFly(double addedUpCost) {
+        return addedUpCost <= durationCapacity;
     }
 }

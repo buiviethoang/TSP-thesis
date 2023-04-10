@@ -77,8 +77,11 @@ public class InputIO {
                 double distance = Utils.calculateEuclideanDistance(points.get(i), points.get(j));
                 distanceElement.setDistance(distance);
                 distanceElement.setTravelTime(distance / input.getTruck().getSpeed());
+                distanceElement.setFlyingTime(distance / input.getDrone().getSpeed());
                 distances.add(distanceElement);
             }
+            listDistances.add(distances);
+            if (i == 0) continue;
             Request newRequest = new Request();
             newRequest.setEarliestTime("10h");
             newRequest.setLatestTime("11h");
@@ -86,7 +89,6 @@ public class InputIO {
             newRequest.setID(points.get(i).getName());
             newRequest.setLocationID(points.get(i).getName());
             listCustomerRequests.add(newRequest);
-            listDistances.add(distances);
         }
         input.setDistances(listDistances);
         input.setRequests(listCustomerRequests);

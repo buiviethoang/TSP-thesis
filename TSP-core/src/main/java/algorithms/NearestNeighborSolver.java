@@ -90,6 +90,7 @@ public class NearestNeighborSolver {
         for (int nodeIndex : bestTour) {
             tspSolution.add(tour.get(nodeIndex));
         }
+        tspSolution.add(tour.get(0)); // append depot as last visited address;
         return tspSolution;
     }
 }

@@ -12,4 +12,5 @@ import lombok.Setter;
 public class TruckRouteElement {
     private String locationID;
     private String action; //
+    private Node node;
 }

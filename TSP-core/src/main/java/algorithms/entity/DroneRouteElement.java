@@ -12,4 +12,5 @@ import lombok.Setter;
 public class DroneRouteElement {
     private String locationID;
     private String action;
+    private Node node;
 }

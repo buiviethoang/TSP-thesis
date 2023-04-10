@@ -24,8 +24,6 @@ public class Main extends JFrame{
             NearestNeighborSolver solver = new NearestNeighborSolver(input.getLocations(), input.getDistances());
             solver.calculateTSPTour(0);
             List<Node> solution = solver.getTSPSolution();
-
-            solution.add(input.getLocations().get(0));
 //            for (Node node : solution) {
 //                log.info("Node info {} ({}, {})", node.getName(), node.getX(), node.getY());
 //            }
@@ -34,7 +32,7 @@ public class Main extends JFrame{
 
             // Solving TSP-LS heuristically
             TruckDroneDeliverySolver heuristicSolver = new TruckDroneDeliverySolver(input);
-            heuristicSolver.calcSaving(5, solution);
+            heuristicSolver.solve();
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

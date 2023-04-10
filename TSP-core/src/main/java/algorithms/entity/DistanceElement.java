@@ -15,4 +15,5 @@ public class DistanceElement {
     private String toLocationId;
     private double distance; // in meters
     private double travelTime;// in seconds
+    private double flyingTime; // in seconds
 }
