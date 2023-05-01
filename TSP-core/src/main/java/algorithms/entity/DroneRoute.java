@@ -23,4 +23,12 @@ public class DroneRoute {
         }
         this.droneRouteElements = routeElements1;
     }
+
+    public List<Node> convertToListNode(List<DroneRouteElement> droneRouteElements) {
+        List<Node> convertedListNode = new ArrayList<>();
+        for (DroneRouteElement droneRouteElement : droneRouteElements) {
+            convertedListNode.add(droneRouteElement.getNode());
+        }
+        return convertedListNode;
+    }
 }

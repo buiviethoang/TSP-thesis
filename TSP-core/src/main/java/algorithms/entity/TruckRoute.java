@@ -24,4 +24,11 @@ public class TruckRoute {
         }
         this.routeElements = routeElements1;
     }
+    public List<Node> convertToListNode(List<TruckRouteElement> routeElem) {
+        List<Node> listNode = new ArrayList<>();
+        for (TruckRouteElement element: routeElem) {
+            listNode.add(element.getNode());
+        }
+        return listNode;
+    }
 }

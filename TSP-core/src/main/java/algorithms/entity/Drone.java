@@ -14,7 +14,7 @@ import java.util.List;
 @NoArgsConstructor
 public class Drone {
     private String ID;
-    private double capacity;
+    private double capacity; // maximum product weight
     private double durationCapacity; // max duration time
     private double speed;
     private double transportCostPerUnit = 1;

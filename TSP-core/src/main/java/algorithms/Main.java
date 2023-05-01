@@ -17,7 +17,7 @@ public class Main extends JFrame{
     public static void main(String[] args) {
         try {
             // Read coordination data from file.
-            File myObj = new File("/home/hoangbui/Documents/DATN/TSP-thesis/TSP-core/src/main/java/algorithms/data/route.txt");
+            File myObj = new File("TSP-core/src/main/java/algorithms/data/route3.txt");
             TruckDroneDeliveryInput input = InputIO.readInputFromFile(myObj);
 
             // Bootstraping with a TSP solution
@@ -34,6 +34,8 @@ public class Main extends JFrame{
             TruckDroneDeliverySolver heuristicSolver = new TruckDroneDeliverySolver(input);
             heuristicSolver.solve();
             TruckDroneDeliverySolutionOutput finalSolution = heuristicSolver.getSolution();
+//            System.out.println("TSP cost: " + finalSolution.getTotalTruckCost());
+//            System.out.println("Total savings: " + finalSolution.calculateTotalCost());
             List<Node> truckRoute = finalSolution.convertTruckRouteToNode(finalSolution.getTruckRoute());
             List<List<Node>> droneRoutes = new ArrayList<>();
             for (DroneRoute ele: finalSolution.getDroneRoutes()) {
