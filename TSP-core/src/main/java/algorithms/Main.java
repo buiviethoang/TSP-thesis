@@ -21,21 +21,19 @@ public class Main extends JFrame{
             TruckDroneDeliveryInput input = InputIO.readInputFromFile(myObj);
 
             // Bootstraping with a TSP solution
-//            NearestNeighborSolver solver = new NearestNeighborSolver(input.getLocations(), input.getDistances());
-//            solver.calculateTSPTour(0);
-//            List<Node> tspSolution = solver.getTSPSolution();
-//            for (Node node : solution) {
-//                log.info("Node info {} ({}, {})", node.getName(), node.getX(), node.getY());
-//            }
-//            DrawingTools drawingTools = new DrawingTools();
-//            drawingTools.drawSolution(solution, 600, 600, true);
+            NearestNeighborSolver solver = new NearestNeighborSolver(input.getLocations(), input.getDistances());
+            solver.calculateTSPTour(0);
+            List<Node> tspSolution = solver.getTSPSolution();
+            for (Node node : tspSolution) {
+                log.info("Node info {} ({}, {})", node.getName(), node.getX(), node.getY());
+            }
+            DrawingTools drawingTools = new DrawingTools();
+            drawingTools.drawSolution(tspSolution, 400, 400, "TSP Solution", false);
 
             // Solving TSP-LS heuristically
             TruckDroneDeliverySolver heuristicSolver = new TruckDroneDeliverySolver(input);
             heuristicSolver.solve();
             TruckDroneDeliverySolutionOutput finalSolution = heuristicSolver.getSolution();
-//            System.out.println("TSP cost: " + finalSolution.getTotalTruckCost());
-//            System.out.println("Total savings: " + finalSolution.calculateTotalCost());
             List<Node> truckRoute = finalSolution.convertTruckRouteToNode(finalSolution.getTruckRoute());
             List<List<Node>> droneRoutes = new ArrayList<>();
             for (DroneRoute ele: finalSolution.getDroneRoutes()) {
@@ -51,13 +49,8 @@ public class Main extends JFrame{
                     log.info("Drone node info {} ({}, {})", node.getName(), node.getX(), node.getY());
                 }
             }
-            DrawingTools drawingTools = new DrawingTools();
-            drawingTools.drawSolution(truckRoute, 600, 600, true, false);
-            for (
-                    List<Node> droneRoute : droneRoutes
-            ) {
-                drawingTools.drawSolution(droneRoute, 600, 600, true, true);
-            }
+//            DrawingTools drawingTools = new DrawingTools();
+            drawingTools.drawSolution(truckRoute, droneRoutes, 400, 400, "TSP-LS", false);
         } catch (Exception e) {
             System.out.println("An error occurred.");
             e.printStackTrace();

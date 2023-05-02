@@ -39,8 +39,6 @@ public class TruckDroneDeliverySolver {
         List<DroneRoute> droneRoutes = new ArrayList<>();
         TruckRoute truckRoute = new TruckRoute(this.globalTruckRoute);
         this.solution = new TruckDroneDeliverySolutionOutput(constructedInput, truckRoute, droneRoutes);
-//        this.solution.setDroneRoutes(droneRoutes);
-//        this.solution.setTruckRoute(truckRoute);
         this.isStop = false;
         this.bestLaunchIndex = -1;
         this.bestVisitIndex = -1;
@@ -49,19 +47,18 @@ public class TruckDroneDeliverySolver {
         this.maxSavings = 0.0;
     }
     public TruckDroneDeliverySolutionOutput solve(){
-        int maximumIterate = 1500;
+        int maximumIterate = 10; // When there is no improvement, terminate after 10 iterations
         while (!isStop) {
             if (maximumIterate < 0) this.isStop = true;
-            System.out.println("Start new loop =============");
+            System.out.println("Starting new loop ==============================================");
             for (int j = 0; j < globalCustomers.size(); j++) {
-                System.out.println("Checking customer: " + globalCustomers.get(j).getName());
+//                System.out.println("Checking customer: " + globalCustomers.get(j).getName());
                 // Algorithm 6: Calculate savings;
                 double savings = calcSaving(j);
                 for (int i = 0; i < globalTruckSubRoutes.size(); i++) {
                     List<Node> truckSubRoute = globalTruckSubRoutes.get(i);
-
+                    // When checking node is one of elements in this SubRoute, no need to relocate itseft into this route.
                     if (isSubRouteAssociateWithDroneDelivery(truckSubRoute, solution)) {
-                        // Algo 7: Relocate a node as a truck node
                         boolean shouldRelocate = true;
                         for (Node customer: truckSubRoute) {
                             if (customer.getName().equals(globalCustomers.get(j).getName())) {
@@ -70,6 +67,7 @@ public class TruckDroneDeliverySolver {
                             }
                         }
                         if (shouldRelocate) {
+                            // Algo 7: Relocate a node as a truck node
                             relocateAsTruck(j, i, truckSubRoute, savings);
                         }
                     } else {
@@ -92,7 +90,6 @@ public class TruckDroneDeliverySolver {
         // TODO: assign value for droneRoutes and truckRoutes
         TruckRoute truckRoute = new TruckRoute(this.globalTruckRoute);
         solution.setTruckRoute(truckRoute);
-//        solution.setTotalCost(maxSavings);
         double globalTSPCost = 0.0;
         for (int i = 0; i < this.tspBootstrappingSolution.size() - 1; i++) {
             globalTSPCost += constructedInput.getDistanceBtwTwoNodesByNode(this.tspBootstrappingSolution.get(i),
@@ -138,7 +135,7 @@ public class TruckDroneDeliverySolver {
                     Math.max(0, -totalTimeSavingIfRemoved);
             savings = savings + truckingWaitingCostSaving + droneWaitingCostSaving;
         }
-        System.out.println("Savings : " + savings);
+//        System.out.println("Savings : " + savings);
         return savings;
     }
     private Node getPreviousRouteSequenceNode(int index, List<Node> truckRoute) {
@@ -238,7 +235,7 @@ public class TruckDroneDeliverySolver {
                 // Why delta < savings? Cos if not, there is no point in relocating a truck node to another position
                 // that increases the total cost and also that will make currSavings - delta negative.
                 if (constructedInput.getDrone().isAbleToFly(0.0)) { // TODO: Calculate this addedUpCost.
-                    // why check this ableToFly conditions?
+                    // Why check this ableToFly conditions?
                     // Cos we are adding new node -> cost would likely to increase the time travel of the added subroute.
                     if (currSavings - delta > maxSavings) {
                         isDroneNode = false;
@@ -247,8 +244,8 @@ public class TruckDroneDeliverySolver {
                         bestRendezvousIndex = getIndexOfNodeInTSPSol(subRoute.get(i+1));
                         maxSavings = currSavings - delta;
                         bestSubrouteIndex = subRouteIndex;
-                        System.out.println("Relocating as truck: " + bestLaunchIndex + " " + bestVisitIndex + " " + bestRendezvousIndex);
-                        System.out.println("Max savings truck - subrouteInd " + maxSavings + "-" + bestSubrouteIndex);
+//                        System.out.println("Relocating as truck: " + bestLaunchIndex + " " + bestVisitIndex + " " + bestRendezvousIndex);
+//                        System.out.println("Max savings truck - subrouteInd " + maxSavings + "-" + bestSubrouteIndex);
 
                         //TODO: Should state the subroute this best solution belongs to. => Already. By saving bestSubrouteIndex
                     }
@@ -283,16 +280,16 @@ public class TruckDroneDeliverySolver {
                             + waitingCost;
 
                     if (currSavings - delta > maxSavings) {
-                        System.out.println("Prev maxSavings: " + maxSavings);
+//                        System.out.println("Prev maxSavings: " + maxSavings);
                         isDroneNode = true;
                         bestVisitIndex = getIndexOfNodeInTSPSol(customer);
                         bestLaunchIndex = getIndexOfNodeInTSPSol(first);
                         bestRendezvousIndex = getIndexOfNodeInTSPSol(last);
                         maxSavings = currSavings - delta;
                         bestSubrouteIndex = subRouteIndex;
-                        System.out.println("Curr savings - delta " + currSavings + "-" + delta);
-                        System.out.println("Relocating as drone: " + bestLaunchIndex + " " + bestVisitIndex + " " + bestRendezvousIndex);
-                        System.out.println("Max savings drone - subrouteInd " + maxSavings + "-" + bestSubrouteIndex);
+//                        System.out.println("Curr savings - delta " + currSavings + "-" + delta);
+//                        System.out.println("Relocating as drone: " + bestLaunchIndex + " " + bestVisitIndex + " " + bestRendezvousIndex);
+//                        System.out.println("Max savings drone - subrouteInd " + maxSavings + "-" + bestSubrouteIndex);
                         //TODO: Should state the subroute this best solution belongs to. => Already, same as algo 7
                     }
                 }
@@ -302,7 +299,7 @@ public class TruckDroneDeliverySolver {
     // Algorithm 9: Update solution when there is a better one
     private void applyChanges() {
         if (isDroneNode) {
-            // Assign new drone route
+            // Step 1: Assign new drone route
             List<Node> droneRouteNode = new ArrayList<>();
             Node launchNode = this.tspBootstrappingSolution.get(bestLaunchIndex);
             Node visitNode = this.tspBootstrappingSolution.get(bestVisitIndex);
@@ -312,7 +309,7 @@ public class TruckDroneDeliverySolver {
             droneRouteNode.add(rendezvousNode);
             DroneRoute droneRoute = new DroneRoute(droneRouteNode);
             solution.getDroneRoutes().add(droneRoute);
-            // Removing j*
+            // Step 2: Removing j*
             int subRouteForRemovingIndex = findSubRouteContainNodeFromSubRoutes(visitNode, globalTruckSubRoutes);
             List<Node> subRouteBeforeRemoving = new ArrayList<>(globalTruckSubRoutes.get(subRouteForRemovingIndex));
             RemoveNodeReturnValue subRouteAfterRemoving = removeNodeFromRoute(visitNode, subRouteBeforeRemoving); // remove from local subRoutes
@@ -331,22 +328,20 @@ public class TruckDroneDeliverySolver {
             if (rightBoundIndex < bestSubRoute.size() - 1) {
                 globalTruckSubRoutes.add(bestSubRoute.subList(rightBoundIndex, bestSubRoute.size()));
             }
-            globalTruckSubRoutes.set(bestSubrouteIndex, droneSubRoute);
-            // Removing i*, j*, k* from customers
-//            int [] removingIndexes = {bestLaunchIndex, bestVisitIndex, bestRendezvousIndex};
-//            Arrays.sort(removingIndexes);
+            globalTruckSubRoutes.set(bestSubrouteIndex, droneSubRoute); // Best route will be replaced by new drone route
+            // Step 3: Removing i*, j*, k* from customers
             globalCustomers.remove(this.tspBootstrappingSolution.get(bestLaunchIndex));
             globalCustomers.remove(this.tspBootstrappingSolution.get(bestVisitIndex));
             globalCustomers.remove(this.tspBootstrappingSolution.get(bestRendezvousIndex));
         }
         else {
             Node nodeToProceed = tspBootstrappingSolution.get(bestVisitIndex);
-            // Removing from current subRoute
+            // Step 1: Removing from current subRoute
             int subRouteForRemovingIndex = findSubRouteContainNodeFromSubRoutes(nodeToProceed, globalTruckSubRoutes);
             List<Node> subRouteBeforeRemoving = new ArrayList<>(globalTruckSubRoutes.get(subRouteForRemovingIndex));
             RemoveNodeReturnValue subRouteAfterRemoving = removeNodeFromRoute(nodeToProceed, subRouteBeforeRemoving);
             globalTruckSubRoutes.set(subRouteForRemovingIndex, subRouteAfterRemoving.route);
-            // Inserting to another subRoute
+            // Step 2: Inserting to another subRoute
             List<Node> truckSubRouteToInsert = globalTruckSubRoutes.get(bestSubrouteIndex);
             List<Node> truckSubRouteAfterInserting = insertNodeToRoute(nodeToProceed, tspBootstrappingSolution.get(bestLaunchIndex), truckSubRouteToInsert);
             globalTruckSubRoutes.set(bestSubrouteIndex, truckSubRouteAfterInserting);

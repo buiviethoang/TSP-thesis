@@ -133,28 +133,60 @@ public class DrawingTools {
         frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
     }
 
-    public void drawSolution(List<Node> initialNodes, int w, int h, boolean labels, boolean isDrawingDrone) {
+    public void drawSolution(List<Node> truckNode, int w, int h, String labels, boolean isDrawingDrone) {
         BufferedImage image = new BufferedImage(w,h, BufferedImage.TYPE_INT_RGB);
-        JFrame frame = new JFrame("Line Drawing Example");
+        JFrame frame = new JFrame(labels);
         JLabel label = new JLabel(new ImageIcon(image));
         Graphics2D g2d = image.createGraphics();
-        Mapping m = defaultMapping(initialNodes, w, h);
+        Mapping m = defaultMapping(truckNode, w, h);
 
         label.setBackground(Color.WHITE);
-        if (isDrawingDrone) {
-            g2d.setColor(Color.GREEN);
-
-        } else {
-            g2d.setColor(Color.ORANGE);
-        }
+        g2d.setColor(Color.GREEN);
         g2d.setBackground(Color.WHITE);
-        for (int i = 0; i < initialNodes.size() - 1; i++) {
-            Node currentNode = initialNodes.get(i);
-            Node nextNode = initialNodes.get(i+1);
+        for (int i = 0; i < truckNode.size() - 1; i++) {
+            Node currentNode = truckNode.get(i);
+            Node nextNode = truckNode.get(i+1);
             Point current = m.transform(currentNode.getX(), currentNode.getY());
             Point next = m.transform(nextNode.getX(), nextNode.getY());
             g2d.drawLine(current.x, current.y, next.x, next.y);
             g2d.drawString(currentNode.getName(), current.x, current.y);
+        }
+        g2d.dispose();
+
+        frame.add(label);
+        frame.pack();
+        frame.setVisible(true);
+        frame.setBackground(Color.WHITE);
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+    }
+    public void drawSolution(List<Node> truckNode, List<List<Node>> droneNodes, int w, int h, String labels, boolean isDrawingDrone) {
+        BufferedImage image = new BufferedImage(w,h, BufferedImage.TYPE_INT_RGB);
+        JFrame frame = new JFrame(labels);
+        JLabel label = new JLabel(new ImageIcon(image));
+        Graphics2D g2d = image.createGraphics();
+        Mapping m = defaultMapping(truckNode, w, h);
+
+        label.setBackground(Color.WHITE);
+        g2d.setColor(Color.GREEN);
+        g2d.setBackground(Color.WHITE);
+        for (int i = 0; i < truckNode.size() - 1; i++) {
+            Node currentNode = truckNode.get(i);
+            Node nextNode = truckNode.get(i+1);
+            Point current = m.transform(currentNode.getX(), currentNode.getY());
+            Point next = m.transform(nextNode.getX(), nextNode.getY());
+            g2d.drawLine(current.x, current.y, next.x, next.y);
+            g2d.drawString(currentNode.getName(), current.x, current.y);
+        }
+        g2d.setColor(Color.ORANGE);
+        for (List<Node> droneRoute : droneNodes) {
+            for (int i = 0; i < droneRoute.size() - 1; i++) {
+                Node currentNode = droneRoute.get(i);
+                Node nextNode = droneRoute.get(i+1);
+                Point current = m.transform(currentNode.getX(), currentNode.getY());
+                Point next = m.transform(nextNode.getX(), nextNode.getY());
+                g2d.drawLine(current.x, current.y, next.x, next.y);
+                g2d.drawString(currentNode.getName(), current.x, current.y);
+            }
         }
         g2d.dispose();
 
